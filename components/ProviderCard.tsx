@@ -29,6 +29,29 @@ export default function ProviderCard({ result, showReasons = false, isTopMatch =
     return badges;
   };
 
+  const getOriginBadge = () => {
+    if (provider.exchange_origin === 'local') return 'Local AU/NZ';
+    if (provider.exchange_origin === 'international') return 'International';
+    return null;
+  };
+
+  const getOriginCountry = () => {
+    if (provider.exchange_origin === 'local') {
+      // For local exchanges, determine if AU or NZ based on serving regions
+      if (provider.au_serving && provider.nz_serving) return { flag: '🇦🇺', country: 'Founded in Australia' };
+      if (provider.au_serving) return { flag: '🇦🇺', country: 'Founded in Australia' };
+      if (provider.nz_serving) return { flag: '🇳🇿', country: 'Founded in New Zealand' };
+      return { flag: '🇦🇺🇳🇿', country: 'Founded in AU/NZ' };
+    }
+    if (provider.exchange_origin === 'international') {
+      // You can expand this based on specific exchanges
+      if (provider.name.toLowerCase().includes('kraken')) return { flag: '🇺🇸', country: 'Founded in United States' };
+      if (provider.name.toLowerCase().includes('coinbase')) return { flag: '🇺🇸', country: 'Founded in United States' };
+      return { flag: '🌍', country: 'International Exchange' };
+    }
+    return null;
+  };
+
   const getPartnerBadges = () => {
     const badges = [];
     if (provider.partner) badges.push('Partner');
@@ -58,6 +81,20 @@ export default function ProviderCard({ result, showReasons = false, isTopMatch =
                   {feature}
                 </Badge>
               ))}
+
+              {/* Origin Badge */}
+              {getOriginBadge() && (
+                <Badge
+                  variant="secondary"
+                  className={
+                    provider.exchange_origin === 'local'
+                      ? "bg-purple-100 text-purple-800"
+                      : "bg-orange-100 text-orange-800"
+                  }
+                >
+                  {getOriginBadge()}
+                </Badge>
+              )}
             </div>
           </div>
           <div className="flex flex-col items-end">
@@ -89,6 +126,8 @@ export default function ProviderCard({ result, showReasons = false, isTopMatch =
 
       <CardContent className="space-y-4">
         {/* Status warnings removed */}
+
+        
 
         {/* Fee Information */}
         <div className="space-y-2">
@@ -153,11 +192,20 @@ export default function ProviderCard({ result, showReasons = false, isTopMatch =
             </Link>
           </Button>
         </div>
-
-        {/* Established Year */}
-        <p className="text-sm font-medium text-gray-700 text-center">
-          Established {provider.established_year}
-        </p>
+        <div className="flex items-center justify-between">
+          {/* Origin Country */}
+          {getOriginCountry() && (
+            <div className="flex items-center space-x-2">
+              <span className="text-lg">{getOriginCountry()?.flag}</span>
+              <p className="text-sm text-gray-600">{getOriginCountry()?.country}</p>
+            </div>
+          )}
+          {/* Established Year */}
+          <p className="text-sm font-medium text-gray-700 ml-auto text-right">
+            Established {provider.established_year}
+          </p>
+        </div>
+        
       </CardContent>
     </Card>
   );

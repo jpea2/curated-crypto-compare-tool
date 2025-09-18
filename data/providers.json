@@ -8,6 +8,7 @@
       "au_serving": true,
       "nz_serving": true,
       "austrac_registered": true,
+      "exchange_origin": "local",
       "funding": {
         "aud_payid_bank": true,
         "aud_card_buy": true,
@@ -24,8 +25,8 @@
         {
           "type": "signup_bonus",
           "title": "$20 Bitcoin Bonus",
-          "description": "Get $20 worth of Bitcoin when you sign up, deposit & make a trade",
-          "terms": "New customers only. AUD or NZD based on address.",
+          "description": "Get $20 worth of Bitcoin when you sign up, verify, deposit & make a trade",
+          "terms": "New customers only. T&C's Apply.",
           "active": true
         }
       ],
@@ -41,6 +42,7 @@
       "au_serving": true,
       "nz_serving": false,
       "austrac_registered": true,
+      "exchange_origin": "local",
       "registered_since": "2018-05-08",
       "funding": {
         "aud_payid_bank": true,
@@ -67,6 +69,7 @@
       "au_serving": true,
       "nz_serving": false,
       "austrac_registered": true,
+      "exchange_origin": "local",
       "funding": {
         "aud_payid_bank": true,
         "aud_card_buy": true,
@@ -92,6 +95,7 @@
       "au_serving": true,
       "nz_serving": false,
       "austrac_registered": true,
+      "exchange_origin": "international",
       "funding": {
       "aud_payid_bank": true,
       "aud_card_buy": true,
@@ -117,6 +121,7 @@
       "au_serving": true,
       "nz_serving": true,
       "austrac_registered": true,
+      "exchange_origin": "international",
       "funding": {
         "aud_payid_bank": true,
         "aud_card_buy": true,

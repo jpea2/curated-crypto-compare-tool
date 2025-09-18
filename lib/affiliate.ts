@@ -5,6 +5,8 @@ export function getAffiliateUrl(affiliateId: string): string | null {
     independent_reserve: process.env.AFFILIATE_INDEPENDENT_RESERVE,
     coinspot: process.env.AFFILIATE_COINSPOT,
     coinstash: process.env.AFFILIATE_COINSTASH,
+    kraken: process.env.AFFILIATE_KRAKEN,
+    coinbase: process.env.AFFILIATE_COINBASE,
   };
 
   return affiliateUrls[affiliateId] || null;
