@@ -328,7 +328,7 @@ export default function TermsPage() {
             By using our service, you agree to these terms and conditions.
           </p>
           <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
-            <Link href="/quiz">I Understand - Start Quiz</Link>
+            <Link href="/compare-crypto-exchanges">Browse Exchanges</Link>
           </Button>
         </div>
       </main>

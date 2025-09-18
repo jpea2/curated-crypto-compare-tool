@@ -1,10 +1,3 @@
-export interface QuizAnswers {
-  currency: 'aud' | 'nzd';
-  experience_level: 'beginner' | 'intermediate' | 'advanced';
-  funding: string[];
-  priority: 'fees' | 'ease' | 'coins' | 'advanced';
-}
-
 export interface Provider {
   id: string;
   affiliate_id: string;

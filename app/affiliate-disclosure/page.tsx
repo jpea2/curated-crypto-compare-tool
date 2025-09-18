@@ -51,7 +51,7 @@ export default function AffiliateDisclosurePage() {
         {/* Top CTA */}
         <div className="text-center mb-8">
           <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
-            <Link href="/quiz">Try the Quiz</Link>
+            <Link href="/compare-crypto-exchanges">Compare Exchanges</Link>
           </Button>
         </div>
 
@@ -66,8 +66,8 @@ export default function AffiliateDisclosurePage() {
             </CardHeader>
             <CardContent className="prose prose-gray max-w-none">
               <p className="text-gray-700 leading-relaxed text-lg">
-                We may earn a commission from some providers listed on this site. 
-                <strong> Commissions do not affect which options match your answers or their ranking.</strong>
+                We may earn a commission from some providers listed on this site.
+                <strong> Commissions do not affect which exchanges appear in our comparison or the order they display by default.</strong>
               </p>
             </CardContent>
           </Card>
@@ -92,15 +92,15 @@ export default function AffiliateDisclosurePage() {
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Algorithm Independence</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Comparison Independence</h3>
                 <p className="text-gray-700 leading-relaxed">
-                  Our matching algorithm is completely independent of revenue relationships. The system:
+                  Our comparison logic is completely independent of revenue relationships. The system:
                 </p>
                 <ul className="list-disc pl-6 space-y-2 text-gray-700 mt-3">
-                  <li>Filters exchanges based solely on your stated requirements</li>
-                  <li>Scores matches based on how well they fit your priorities</li>
-                  <li>Uses objective tie-breakers (funding options, features, alphabetical order)</li>
-                  <li>Never boosts partner exchanges in rankings</li>
+                  <li>Lets you filter exchanges based solely on features you select</li>
+                  <li>Offers multiple sort options (default partner-first, alphabetical, coin count, established year)</li>
+                  <li>Clearly labels partner and sponsored providers in the interface</li>
+                  <li>Does not hide non-partner exchanges—they remain visible in every view</li>
                 </ul>
               </div>
 
@@ -146,7 +146,7 @@ export default function AffiliateDisclosurePage() {
                 <div>
               <h3 className="font-semibold text-blue-800 mb-2">✓ Our Commitments</h3>
                   <ul className="list-disc pl-4 space-y-1 text-blue-700 text-sm">
-                    <li>Matching based purely on your criteria</li>
+                    <li>Comparisons respond only to filters you set</li>
                     <li>Clear labeling of partner relationships</li>
                     <li>Include non-partner options</li>
                     <li>Transparent methodology</li>

@@ -61,18 +61,14 @@ export default function PrivacyPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Quiz Responses</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Filter & Comparison Selections</h3>
                 <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                  <li>Your currency preference (AUD/NZD)</li>
-                  <li>Account type preference</li>
-                  <li>Funding method preferences</li>
-                  <li>Priority selection</li>
-                  <li>Demo mode preference</li>
+                  <li>Filters you toggle (region, funding methods, feature checkboxes)</li>
+                  <li>Sort option you choose on the comparison grid</li>
+                  <li>Exchanges you pick in the side-by-side comparison tool</li>
                 </ul>
                 <p className="text-sm text-gray-600 mt-3">
-                  <strong>Storage:</strong> Quiz answers are stored only in your browser's URL and session. 
-                  We do not save this information to our servers or databases.
-                </p>
+                  <strong>Storage:</strong> These selections live only in your browser while the page is open. We don’t store them on our servers, and they reset if you refresh or leave the site.</p>
               </div>
 
               <div>
@@ -113,9 +109,9 @@ export default function PrivacyPage() {
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Primary Uses</h3>
                 <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                  <li>Process your quiz responses to show matching exchanges</li>
-                  <li>Improve our matching algorithm and user experience</li>
-                  <li>Understand which features are most valuable to users</li>
+                  <li>Show exchange comparisons based on the filters and sort you select</li>
+                  <li>Improve the comparison experience and interface</li>
+                  <li>Understand which comparison features are most valuable to users</li>
                   <li>Ensure the service works correctly across different devices</li>
                 </ul>
               </div>
@@ -320,7 +316,7 @@ export default function PrivacyPage() {
         {/* CTA */}
         <div className="text-center mt-12">
           <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
-            <Link href="/quiz">Start Quiz</Link>
+            <Link href="/compare-crypto-exchanges">Compare Exchanges</Link>
           </Button>
         </div>
       </main>

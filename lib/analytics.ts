@@ -122,16 +122,6 @@ export function trackEvent(
 }
 
 /**
- * Track quiz completion (conversion event)
- */
-export function trackQuizCompletion(): void {
-  trackEvent('quiz_completed', {
-    content_name: 'crypto_exchange_quiz',
-    content_category: 'engagement',
-  });
-}
-
-/**
  * Track exchange click (conversion event)
  */
 export function trackExchangeClick(exchangeName: string): void {
