@@ -107,8 +107,8 @@ export default function HowWeComparePage() {
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">Ordering & Rankings</h3>
                 <p className="text-gray-700 leading-relaxed">
-                  We don’t rank exchanges or provide recommendations. You decide what matters via filters, and we show matching providers side‑by‑side.
-                  Where needed, we present items in a consistent order (e.g., alphabetical) for clarity.
+                  We don’t rank exchanges or provide recommendations. By default, the grid lists partner or sponsored providers first (they’re clearly labelled), followed by everyone else alphabetically.
+                  You can change the sort control to alphabetical, coin count, or established date at any time, and the comparison picker always lets you choose from the full provider list.
                 </p>
               </div>
             </CardContent>
@@ -172,4 +172,3 @@ export default function HowWeComparePage() {
     </div>
   );
 }
-

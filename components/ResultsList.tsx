@@ -17,10 +17,16 @@ interface ResultsListProps {
 
 type ProviderWithExtras = Provider & Record<string, any>;
 
+const partnerPrioritySort = (a: ProviderWithExtras, b: ProviderWithExtras) => {
+  if (a.partner !== b.partner) return a.partner ? -1 : 1;
+  if (a.sponsored !== b.sponsored) return a.sponsored ? -1 : 1;
+  return a.name.localeCompare(b.name);
+};
+
 export default function ResultsList({ providers, region }: ResultsListProps) {
   const typedProviders = providers as ProviderWithExtras[];
 
-  const [sortBy, setSortBy] = useState<'name' | 'coins' | 'fees' | 'established'>('name');
+  const [sortBy, setSortBy] = useState<'default' | 'name' | 'coins' | 'fees' | 'established'>('default');
   const [showFilters, setShowFilters] = useState(false);
 
   // Filter states
@@ -80,6 +86,8 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
 
     // Apply sorting
     switch (sortBy) {
+      case 'default':
+        return filtered.sort(partnerPrioritySort);
       case 'name':
         return filtered.sort((a, b) => a.name.localeCompare(b.name));
       case 'coins':
@@ -89,9 +97,14 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
       case 'fees':
         return filtered.sort((a, b) => a.name.localeCompare(b.name)); // Simple fallback
       default:
-        return filtered;
+        return filtered.sort(partnerPrioritySort);
     }
   }, [typedProviders, selectedCurrencies, selectedDepositMethods, selectedFeatures, sortBy]);
+
+  const providersForComparison = useMemo(
+    () => [...typedProviders].sort(partnerPrioritySort),
+    [typedProviders]
+  );
 
   // Ensure selections remain valid when list changes
   useEffect(() => {
@@ -160,7 +173,7 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select an exchange</option>
-                {typedProviders.map(provider => (
+                {providersForComparison.map(provider => (
                   <option
                     key={provider.id}
                     value={provider.id}
@@ -180,7 +193,7 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select an exchange</option>
-                {typedProviders.map(provider => (
+                {providersForComparison.map(provider => (
                   <option
                     key={provider.id}
                     value={provider.id}
@@ -213,6 +226,7 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
               onChange={(e) => setSortBy(e.target.value as any)}
               className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
+              <option value="default">Default (Partners first)</option>
               <option value="name">Sort by Name</option>
               <option value="coins">Sort by Coins Supported</option>
               <option value="established">Sort by Established Date</option>
