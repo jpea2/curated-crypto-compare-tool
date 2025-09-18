@@ -20,7 +20,15 @@
       "fee_info": "0.5% down to 0.02% (tiered)",
       "partner": true,
       "sponsored": false,
-      "promos": [],
+      "promos": [
+        {
+          "type": "signup_bonus",
+          "title": "$20 Bitcoin Bonus",
+          "description": "Get $20 worth of Bitcoin when you sign up, deposit & make a trade",
+          "terms": "New customers only. AUD or NZD based on address.",
+          "active": true
+        }
+      ],
       "coins_supported": 30,
       "ease_of_setup": 4,
       "established_year": 2013,

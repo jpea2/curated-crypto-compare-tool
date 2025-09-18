@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, Shield, Users, Check } from 'lucide-react';
+import { ExternalLink, Shield, Users, Check, Gift, Coins } from 'lucide-react';
 import { MatchResult } from '@/types';
 import Link from 'next/link';
 
@@ -121,7 +121,28 @@ export default function ProviderCard({ result, showReasons = false, isTopMatch =
           </div>
         </div>
 
-
+        {/* Promos */}
+        {provider.promos && provider.promos.length > 0 && (
+          <div className="space-y-2">
+            {provider.promos
+              .filter(promo => promo.active)
+              .map((promo, index) => (
+                <div key={index} className="bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-lg p-3">
+                  <div className="flex items-center space-x-2 mb-1">
+                    <Gift className="h-4 w-4 text-green-600" />
+                    {promo.type === 'signup_bonus' && promo.title.toLowerCase().includes('bitcoin') && (
+                      <Coins className="h-4 w-4 text-orange-500" />
+                    )}
+                    <h4 className="text-sm font-semibold text-green-800">{promo.title}</h4>
+                  </div>
+                  <p className="text-xs text-green-700 mb-1">{promo.description}</p>
+                  {promo.terms && (
+                    <p className="text-xs text-green-600 italic">{promo.terms}</p>
+                  )}
+                </div>
+              ))}
+          </div>
+        )}
 
         {/* CTA Button */}
         <div className="pt-4">
