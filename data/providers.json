@@ -7,9 +7,9 @@
       "name": "Independent Reserve",
       "au_serving": true,
       "nz_serving": true,
-      "Local": true,
       "austrac_registered": true,
       "exchange_origin": "local",
+      "local": true,
       "funding": {
         "aud_payid_bank": true,
         "aud_card_buy": true,
@@ -44,6 +44,7 @@
       "nz_serving": false,
       "austrac_registered": true,
       "exchange_origin": "local",
+      "local": true,
       "registered_since": "2018-05-08",
       "funding": {
         "aud_payid_bank": true,
@@ -71,6 +72,7 @@
       "nz_serving": false,
       "austrac_registered": true,
       "exchange_origin": "local",
+      "local": true,
       "funding": {
         "aud_payid_bank": true,
         "aud_card_buy": true,
@@ -97,6 +99,7 @@
       "nz_serving": false,
       "austrac_registered": true,
       "exchange_origin": "international",
+      "local": false,
       "funding": {
       "aud_payid_bank": true,
       "aud_card_buy": true,
@@ -123,6 +126,7 @@
       "nz_serving": true,
       "austrac_registered": true,
       "exchange_origin": "international",
+      "local": false,
       "funding": {
         "aud_payid_bank": true,
         "aud_card_buy": true,

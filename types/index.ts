@@ -22,6 +22,7 @@ export interface Provider {
   established_year: number;
   custom_badge?: string;
   exchange_origin?: 'local' | 'international';
+  local: boolean;
 }
 
 export interface Promo {

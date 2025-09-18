@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, Shield, Users, Check, Gift, Coins } from 'lucide-react';
+import { ExternalLink, Shield, Users, Check, Gift, Coins, Flag } from 'lucide-react';
 import { MatchResult } from '@/types';
 import Link from 'next/link';
 
@@ -36,18 +36,11 @@ export default function ProviderCard({ result, showReasons = false, isTopMatch =
   };
 
   const getOriginCountry = () => {
-    if (provider.exchange_origin === 'local') {
-      // For local exchanges, determine if AU or NZ based on serving regions
-      if (provider.au_serving && provider.nz_serving) return { flag: '🇦🇺', country: 'Founded in Australia' };
-      if (provider.au_serving) return { flag: '🇦🇺', country: 'Founded in Australia' };
-      if (provider.nz_serving) return { flag: '🇳🇿', country: 'Founded in New Zealand' };
-      return { flag: '🇦🇺🇳🇿', country: 'Founded in AU/NZ' };
-    }
-    if (provider.exchange_origin === 'international') {
-      // You can expand this based on specific exchanges
-      if (provider.name.toLowerCase().includes('kraken')) return { flag: '🇺🇸', country: 'Founded in United States' };
-      if (provider.name.toLowerCase().includes('coinbase')) return { flag: '🇺🇸', country: 'Founded in United States' };
-      return { flag: '🌍', country: 'International Exchange' };
+    if (provider.local) {
+      return {
+        flag: '🇦🇺',
+        country: "Locally Owned"
+      }
     }
     return null;
   };
