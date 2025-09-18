@@ -1,201 +1,266 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ChevronDown, ChevronUp, Filter, RotateCcw } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
 import ProviderCard from './ProviderCard';
-import { MatchResult, QuizAnswers, ExcludedProvider } from '@/types';
+import { Provider } from '@/types';
 import Link from 'next/link';
-import { explainNonMatches } from '@/lib/matchEngine';
 
 interface ResultsListProps {
-  results: MatchResult[];
-  answers: QuizAnswers;
+  providers: Provider[];
+  region?: 'au' | 'nz';
 }
 
-export default function ResultsList({ results, answers }: ResultsListProps) {
-  const [showAllMatches, setShowAllMatches] = useState(true);
-  const [showExcluded, setShowExcluded] = useState(false);
+export default function ResultsList({ providers, region }: ResultsListProps) {
+  const [sortBy, setSortBy] = useState<'name' | 'coins' | 'fees' | 'established'>('name');
+  const [showFilters, setShowFilters] = useState(true);
 
-  const topMatches = results.filter(result => result.isTopMatch);
-  const otherMatches = results.filter(result => !result.isTopMatch);
+  // Filter states
+  const [selectedCurrencies, setSelectedCurrencies] = useState<string[]>([]);
+  const [selectedDepositMethods, setSelectedDepositMethods] = useState<string[]>([]);
+  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
 
-  const displayedResults = showAllMatches ? results : topMatches;
+  // Filter and sort providers
+  const filteredAndSortedProviders = useMemo(() => {
+    let filtered = [...providers];
 
-  const excluded: ExcludedProvider[] = explainNonMatches(answers);
+    // Apply currency filters
+    if (selectedCurrencies.length > 0) {
+      filtered = filtered.filter(provider => {
+        return selectedCurrencies.some(currency => {
+          if (currency === 'aud') return provider.au_serving;
+          if (currency === 'nzd') return provider.nz_serving;
+          return false;
+        });
+      });
+    }
 
-  const getAnswerSummary = () => {
-    const summary = [];
-    summary.push(`${answers.currency.toUpperCase()} currency`);
+    // Apply deposit method filters
+    if (selectedDepositMethods.length > 0) {
+      filtered = filtered.filter(provider => {
+        return selectedDepositMethods.some(method => {
+          return provider.funding[method as keyof typeof provider.funding];
+        });
+      });
+    }
 
-    const experienceLevels: Record<QuizAnswers['experience_level'], string> = {
-      beginner: 'Beginner level',
-      intermediate: 'Intermediate level',
-      advanced: 'Advanced level'
-    };
-    summary.push(experienceLevels[answers.experience_level]);
+    // Apply feature filters
+    if (selectedFeatures.length > 0) {
+      filtered = filtered.filter(provider => {
+        return selectedFeatures.every(feature => {
+          if (feature === 'smsf') return provider.smsf_support;
+          if (feature === 'advanced') return provider.advanced_features;
+          if (feature === 'demo') return provider.demo_mode;
+          return false;
+        });
+      });
+    }
 
-    if (answers.funding.includes('bank_transfer')) summary.push('Bank transfer');
-    if (answers.funding.includes('card_buy')) summary.push('Card purchases');
+    // Apply sorting
+    switch (sortBy) {
+      case 'name':
+        return filtered.sort((a, b) => a.name.localeCompare(b.name));
+      case 'coins':
+        return filtered.sort((a, b) => b.coins_supported - a.coins_supported);
+      case 'established':
+        return filtered.sort((a, b) => a.established_year - b.established_year);
+      case 'fees':
+        return filtered.sort((a, b) => a.name.localeCompare(b.name)); // Simple fallback
+      default:
+        return filtered;
+    }
+  }, [providers, selectedCurrencies, selectedDepositMethods, selectedFeatures, sortBy]);
 
-    const priorities: Record<QuizAnswers['priority'], string> = {
-      fees: 'Low fees',
-      ease: 'Easy setup',
-      coins: 'Wide coin range',
-      advanced: 'Advanced features'
-    };
-    summary.push(priorities[answers.priority]);
-
-    return summary;
+  // Clear all filters
+  const clearAllFilters = () => {
+    setSelectedCurrencies([]);
+    setSelectedDepositMethods([]);
+    setSelectedFeatures([]);
   };
+
+  // Check if any filters are active
+  const hasActiveFilters = selectedCurrencies.length > 0 || selectedDepositMethods.length > 0 || selectedFeatures.length > 0;
 
   return (
     <div className="space-y-8">
-      {/* Results Summary */}
+      {/* Comparison Header */}
       <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border-0">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          {results.length} Results
-        </h2>
-        <p className="text-sm text-gray-500 mb-2">Your Responses</p>
-        <div className="flex flex-wrap gap-2 mb-4">
-          {getAnswerSummary().map((item, index) => (
-            <Badge key={index} variant="secondary" className="bg-blue-100 text-blue-800">
-              {item}
-            </Badge>
-          ))}
-        </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4 sm:mb-0">
+            {filteredAndSortedProviders.length} of {providers.length} Crypto Exchange{providers.length !== 1 ? 's' : ''}
+            {region && ` in ${region === 'au' ? 'Australia' : 'New Zealand'}`}
+          </h2>
 
-        <div className="flex flex-wrap gap-3">
-          <Button asChild variant="outline" size="sm">
-            <Link href="/quiz">
-              <RotateCcw className="w-4 h-4 mr-2" />
-              Retake Quiz
-            </Link>
-          </Button>
-          
-          <Button asChild variant="outline" size="sm">
-            <Link href="/methodology">
-              <Filter className="w-4 h-4 mr-2" />
-              How Matching Works
-            </Link>
-          </Button>
-        </div>
-      </div>
+          <div className="flex flex-wrap gap-3">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="name">Sort by Name</option>
+              <option value="coins">Sort by Coins Supported</option>
+              <option value="established">Sort by Established Date</option>
+            </select>
 
-      {/* Top Matches */}
-      {topMatches.length > 0 && (
-        <div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">Matches</h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {topMatches.map(result => (
-              <ProviderCard 
-                key={result.provider.id} 
-                result={result} 
-                isTopMatch={true}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Show All Toggle */}
-      {otherMatches.length > 0 && (
-        <div className="text-center">
-          <Button
-            variant="outline"
-            onClick={() => setShowAllMatches(!showAllMatches)}
-            className="px-6"
-          >
-            {showAllMatches ? (
-              <>
-                <ChevronUp className="w-4 h-4 mr-2" />
-                Show High-Match Only
-              </>
-            ) : (
-              <>
-                <ChevronDown className="w-4 h-4 mr-2" />
-                Show All {results.length} Matches
-              </>
-            )}
-          </Button>
-        </div>
-      )}
-
-      {/* All Other Matches */}
-      {showAllMatches && otherMatches.length > 0 && (
-        <div>
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">
-            All Other Matches ({otherMatches.length})
-          </h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {otherMatches.map(result => (
-              <ProviderCard 
-                key={result.provider.id} 
-                result={result} 
-                isTopMatch={false}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Excluded Providers */}
-      {excluded.length > 0 && (
-        <div className="mt-8">
-          <div className="flex items-center justify-center mb-4">
             <Button
               variant="outline"
-              onClick={() => setShowExcluded(!showExcluded)}
-              className="px-6"
+              size="sm"
+              onClick={() => setShowFilters(!showFilters)}
+              className={hasActiveFilters ? 'bg-blue-50 border-blue-300 text-blue-700' : ''}
             >
-              {showExcluded ? (
-                <>
-                  <ChevronUp className="w-4 h-4 mr-2" />
-                  Hide Excluded Providers
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="w-4 h-4 mr-2" />
-                  Show Excluded Providers ({excluded.length})
-                </>
-              )}
+              <Filter className="w-4 h-4 mr-2" />
+              Filters
+              {hasActiveFilters && <span className="ml-1">({selectedCurrencies.length + selectedDepositMethods.length + selectedFeatures.length})</span>}
             </Button>
+
+            {hasActiveFilters && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearAllFilters}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                <X className="w-4 h-4 mr-1" />
+                Clear All
+              </Button>
+            )}
           </div>
-
-          {showExcluded && (
-            <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border-0">
-              <h4 className="text-lg font-semibold text-gray-900 mb-4">Why Some Providers Weren't Included</h4>
-              <div className="space-y-4">
-                {excluded.map(({ provider, reasons }) => (
-                  <div key={provider.id} className="border border-gray-200 rounded-lg p-4">
-                    <div className="font-medium text-gray-900 mb-2">{provider.name}</div>
-                    <ul className="list-disc pl-5 text-sm text-gray-700 space-y-1">
-                      {reasons.map((r, i) => (
-                        <li key={i}>{r}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
-      )}
 
-      {/* No Results */}
-      {results.length === 0 && (
+        {showFilters && (
+          <div className="mt-4 p-6 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="grid md:grid-cols-3 gap-6">
+
+              {/* Currency Filter */}
+              <div>
+                <h4 className="font-medium text-gray-900 mb-3">Currency</h4>
+                <div className="space-y-2">
+                  {[
+                    { id: 'aud', label: 'Australian Dollar (AUD)', count: providers.filter(p => p.au_serving).length },
+                    { id: 'nzd', label: 'New Zealand Dollar (NZD)', count: providers.filter(p => p.nz_serving).length }
+                  ].map((currency) => (
+                    <div key={currency.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={currency.id}
+                        checked={selectedCurrencies.includes(currency.id)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setSelectedCurrencies([...selectedCurrencies, currency.id]);
+                          } else {
+                            setSelectedCurrencies(selectedCurrencies.filter(c => c !== currency.id));
+                          }
+                        }}
+                      />
+                      <label htmlFor={currency.id} className="text-sm text-gray-700 cursor-pointer flex-1">
+                        {currency.label} ({currency.count})
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Deposit Methods Filter */}
+              <div>
+                <h4 className="font-medium text-gray-900 mb-3">Deposit Methods</h4>
+                <div className="space-y-2">
+                  {[
+                    { id: 'aud_payid_bank', label: 'AUD Bank Transfer/PayID', count: providers.filter(p => p.funding.aud_payid_bank).length },
+                    { id: 'aud_card_buy', label: 'AUD Card Purchase', count: providers.filter(p => p.funding.aud_card_buy).length },
+                    { id: 'nzd_bank_transfer', label: 'NZD Bank Transfer', count: providers.filter(p => p.funding.nzd_bank_transfer).length },
+                    { id: 'nzd_card_buy', label: 'NZD Card Purchase', count: providers.filter(p => p.funding.nzd_card_buy).length }
+                  ].map((method) => (
+                    <div key={method.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={method.id}
+                        checked={selectedDepositMethods.includes(method.id)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setSelectedDepositMethods([...selectedDepositMethods, method.id]);
+                          } else {
+                            setSelectedDepositMethods(selectedDepositMethods.filter(m => m !== method.id));
+                          }
+                        }}
+                      />
+                      <label htmlFor={method.id} className="text-sm text-gray-700 cursor-pointer flex-1">
+                        {method.label} ({method.count})
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Features Filter */}
+              <div>
+                <h4 className="font-medium text-gray-900 mb-3">Features</h4>
+                <div className="space-y-2">
+                  {[
+                    { id: 'smsf', label: 'SMSF Support', count: providers.filter(p => p.smsf_support).length },
+                    { id: 'advanced', label: 'Advanced Features', count: providers.filter(p => p.advanced_features).length },
+                    { id: 'demo', label: 'Demo Mode', count: providers.filter(p => p.demo_mode).length }
+                  ].map((feature) => (
+                    <div key={feature.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={feature.id}
+                        checked={selectedFeatures.includes(feature.id)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setSelectedFeatures([...selectedFeatures, feature.id]);
+                          } else {
+                            setSelectedFeatures(selectedFeatures.filter(f => f !== feature.id));
+                          }
+                        }}
+                      />
+                      <label htmlFor={feature.id} className="text-sm text-gray-700 cursor-pointer flex-1">
+                        {feature.label} ({feature.count})
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Exchange Grid */}
+      {filteredAndSortedProviders.length > 0 ? (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredAndSortedProviders.map(provider => (
+            <ProviderCard
+              key={provider.id}
+              result={{ provider, score: 0, reasons: [], isTopMatch: false }}
+              showReasons={false}
+              isTopMatch={false}
+            />
+          ))}
+        </div>
+      ) : (
         <div className="text-center py-12">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">No Exact Matches Found</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">
+            {hasActiveFilters ? 'No Exchanges Match Your Filters' : 'No Exchanges Found'}
+          </h3>
           <p className="text-gray-600 mb-6">
-            Try adjusting your criteria or selecting different funding options.
+            {hasActiveFilters
+              ? 'Try adjusting your filter selections to see more exchanges.'
+              : 'No exchanges are currently available for the selected region.'
+            }
           </p>
-          <Button asChild>
-            <Link href="/quiz">
-              <RotateCcw className="w-4 h-4 mr-2" />
-              Modify Your Answers
-            </Link>
-          </Button>
+          {hasActiveFilters ? (
+            <Button onClick={clearAllFilters}>
+              <X className="w-4 h-4 mr-2" />
+              Clear All Filters
+            </Button>
+          ) : (
+            <Button asChild>
+              <Link href="/methodology">
+                Learn More About Our Selection Criteria
+              </Link>
+            </Button>
+          )}
         </div>
       )}
     </div>

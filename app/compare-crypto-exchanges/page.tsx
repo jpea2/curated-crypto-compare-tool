@@ -1,58 +1,51 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Shield, AlertTriangle } from 'lucide-react';
+import { Home, Shield, AlertTriangle } from 'lucide-react';
 import Footer from '@/components/Footer';
 import ResultsList from '@/components/ResultsList';
-import { matchProviders } from '@/lib/matchEngine';
-import { QuizAnswers } from '@/types';
+import { getAllProviders, filterProviders } from '@/lib/providers';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Exchange Results | Crypto Matches for AU/NZ',
-  description: 'Crypto exchange matches based on your preferences for Australia and New Zealand.',
+  title: 'Compare Crypto Exchanges | Australia & New Zealand',
+  description: 'Compare cryptocurrency exchanges available in Australia and New Zealand. View features, fees, and supported currencies side-by-side.',
 };
 
-interface ResultsPageProps {
+interface ComparisonPageProps {
   searchParams: {
-    currency?: string;
-    experience_level?: string;
+    region?: string;
     funding?: string;
-    priority?: string;
+    features?: string;
+    sort?: string;
   };
 }
 
-export default function ResultsPage({ searchParams }: ResultsPageProps) {
-  // Sanitize quiz answers from search params
-  const allowedCurrency = new Set(['aud', 'nzd']);
-  const allowedExperienceLevel = new Set(['beginner', 'intermediate', 'advanced']);
+export default function ComparisonPage({ searchParams }: ComparisonPageProps) {
+  // Parse optional filter parameters
+  const allowedRegions = new Set(['au', 'nz']);
   const allowedFunding = new Set(['bank_transfer', 'card_buy']);
-  const allowedPriority = new Set(['fees', 'ease', 'coins', 'advanced']);
+  const allowedFeatures = new Set(['smsf', 'advanced', 'demo']);
+
+  const region = allowedRegions.has(String(searchParams.region))
+    ? (searchParams.region as 'au' | 'nz')
+    : undefined;
 
   const rawFunding = searchParams.funding?.split(',') || [];
   const funding = rawFunding.filter((f) => allowedFunding.has(f));
 
-  const currency = allowedCurrency.has(String(searchParams.currency))
-    ? (searchParams.currency as 'aud' | 'nzd')
-    : 'aud';
+  const rawFeatures = searchParams.features?.split(',') || [];
+  const features = rawFeatures.filter((f) => allowedFeatures.has(f));
 
-  const experience_level = allowedExperienceLevel.has(String(searchParams.experience_level))
-    ? (searchParams.experience_level as 'beginner' | 'intermediate' | 'advanced')
-    : 'beginner';
+  // Get filtered providers
+  const allProviders = getAllProviders();
+  const filteredProviders = filterProviders({
+    region,
+    funding: funding.length > 0 ? funding : undefined,
+    features: features.length > 0 ? features : undefined,
+  });
 
-  const priority = allowedPriority.has(String(searchParams.priority))
-    ? (searchParams.priority as 'fees' | 'ease' | 'coins' | 'advanced')
-    : 'fees';
-
-  const answers: QuizAnswers = {
-    currency,
-    experience_level,
-    funding,
-    priority,
-  };
-
-  // Get matching results
-  const results = matchProviders(answers);
+  const providers = filteredProviders.length > 0 ? filteredProviders : allProviders;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
@@ -63,9 +56,9 @@ export default function ResultsPage({ searchParams }: ResultsPageProps) {
             <div className="flex items-center space-x-4">
               <div className="hidden md:block">
                 <Button asChild variant="ghost" size="sm">
-                  <Link href="/quiz">
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    Back to Quiz
+                  <Link href="/">
+                    <Home className="h-4 w-4 mr-2" />
+                    Home
                   </Link>
                 </Button>
               </div>
@@ -75,7 +68,7 @@ export default function ResultsPage({ searchParams }: ResultsPageProps) {
               <Shield className="h-5 w-5 text-blue-600" />
               <span className="font-semibold">CuratedCryptoInsights</span>
             </Link>
-            
+
             <nav className="hidden md:flex space-x-4">
               <Link href="/methodology" className="text-sm text-gray-600 hover:text-gray-900">
                 Methodology
@@ -95,7 +88,7 @@ export default function ResultsPage({ searchParams }: ResultsPageProps) {
         <div className="mb-6">
           <div className="flex items-center justify-center p-3 bg-blue-50 border border-blue-200 rounded-md">
             <p className="text-sm text-blue-900 text-center">
-              We may earn a commission if you click a partner link or sign up with a provider through our site. This doesn’t influence our matching or rankings.{' '}
+              We may earn a commission if you click a partner link or sign up with a provider through our site. This helps support our comparison tool.{' '}
               <Link href="/affiliate-disclosure" className="underline">Learn more</Link>.
             </p>
           </div>
@@ -126,7 +119,7 @@ export default function ResultsPage({ searchParams }: ResultsPageProps) {
             </div>
           </div>
         }>
-          <ResultsList results={results} answers={answers} />
+          <ResultsList providers={providers} region={region} />
         </Suspense>
       </main>
 
@@ -140,20 +133,20 @@ export default function ResultsPage({ searchParams }: ResultsPageProps) {
                 <h3 className="font-semibold text-gray-900 mb-2">Important Disclaimers</h3>
                 <div className="space-y-2 text-sm text-gray-700">
                   <p>
-                    <strong>No Endorsement or Recommendation:</strong> We don’t endorse cryptocurrency or any
-                    particular provider, product, or service. Results are informational only and are not a
-                    recommendation to trade, invest, or use any service.
+                    <strong>No Endorsement or Recommendation:</strong> We don't endorse cryptocurrency or any
+                    particular provider, product, or service. This comparison tool provides factual information only
+                    and is not a recommendation to trade, invest, or use any service.
                   </p>
                   <p>
-                    <strong>General Advice Warning:</strong> This information is general only and doesn't 
+                    <strong>General Advice Warning:</strong> This information is general only and doesn't
                     consider your objectives, financial situation or needs. Consider independent advice.
                   </p>
                   <p>
-                    <strong>Revenue Disclosure:</strong> We may earn commissions from partner exchanges. 
-                    This doesn't influence our matching algorithm or rankings.
+                    <strong>Revenue Disclosure:</strong> We may earn commissions from partner exchanges.
+                    This doesn't influence the information presented in our comparison tool.
                   </p>
                   <p>
-                    <strong>Coverage:</strong> Not all exchanges are listed. We focus on AUSTRAC-registered exchanges and 
+                    <strong>Coverage:</strong> Not all exchanges are listed. We focus on AUSTRAC-registered exchanges and
                     NZ-registered providers for spot crypto trading only.
                   </p>
                 </div>

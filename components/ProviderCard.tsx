@@ -13,8 +13,8 @@ interface ProviderCardProps {
   isTopMatch?: boolean;
 }
 
-export default function ProviderCard({ result, showReasons = true, isTopMatch = false }: ProviderCardProps) {
-  const { provider, reasons } = result;
+export default function ProviderCard({ result, showReasons = false, isTopMatch = false }: ProviderCardProps) {
+  const { provider } = result;
 
   const getCurrencyBadges = () => {
     const badges = [];
@@ -121,19 +121,6 @@ export default function ProviderCard({ result, showReasons = true, isTopMatch = 
           </div>
         </div>
 
-        {/* Match Reasons */}
-        {showReasons && reasons.length > 0 && (
-          <div className="space-y-2">
-            <h4 className="font-medium text-gray-900">Why {provider.name}</h4>
-            <div className="space-y-1">
-              {reasons.map((reason, index) => (
-                <p key={index} className="text-sm text-green-700 bg-green-50 px-2 py-1 rounded">
-                  • {reason}
-                </p>
-              ))}
-            </div>
-          </div>
-        )}
 
 
         {/* CTA Button */}
