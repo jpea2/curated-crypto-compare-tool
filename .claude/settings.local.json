@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:business.x.com)",
+      "WebFetch(domain:www.canstar.com.au)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

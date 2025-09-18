@@ -1,0 +1,30 @@
+Safe design pattern for your quiz (spot-crypto only):
+
+Scope-gate: Only include AUSTRAC-registered DCEs that offer spot crypto for AUD. 
+AUSTRAC
++1
+
+Filters > rankings: Let users filter by fees, AUD deposit methods, ID/KYC level, supported coins, support hours; show all matches (no “best for you” labels). (Aligns with ACCC transparency expectations.) 
+ACCC
+
+Language: Use neutral, factual phrasing (“supports PayID deposits; maker/taker 0.10%/0.20%”)—avoid opinion words (“best”, “safest”, “we recommend”). See ASIC’s factual vs advice framework. 
+ASIC Download
+
+Disclosures: Show affiliate disclosure and a methodology page describing exactly how results are generated. 
+ACCC
+
+4) Minimal docs you’ll need
+
+Privacy Policy meeting APP 1.4 (OAIC checklist). 
+OAIC
++1
+
+Website Terms (use licenseable template; add IP/acceptable-use/liability). (See sources above.) 
+GitHub
+
+Affiliate Disclosure + Methodology (ACCC comparator transparency). 
+ACCC
+
+If you want, tell me:
+
+the exact exchanges you’ll list, 2) fields/filters you want, and 3) where users are (AU only?). I’ll draft a privacy policy (APP-compliant) + affiliate disclosure + methodology page tailored to your setup. (General info, not legal advice.)

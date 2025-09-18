@@ -1,0 +1,131 @@
+{
+  "last_reviewed": "15/09/2025",
+  "providers": [
+    {
+      "id": "independent_reserve",
+      "affiliate_id": "independent_reserve",
+      "name": "Independent Reserve",
+      "au_serving": true,
+      "nz_serving": true,
+      "austrac_registered": true,
+      "funding": {
+        "aud_payid_bank": true,
+        "aud_card_buy": true,
+        "nzd_bank_transfer": true,
+        "nzd_card_buy": false
+      },
+      "smsf_support": true,
+      "advanced_features": false,
+      "demo_mode": false,
+      "fee_info": "0.5% down to 0.02% (tiered)",
+      "partner": true,
+      "sponsored": false,
+      "promos": [],
+      "coins_supported": 30,
+      "ease_of_setup": 4,
+      "established_year": 2013,
+      "custom_badge": "Trusted Choice"
+    },
+    {
+      "id": "coinspot",
+      "affiliate_id": "coinspot",
+      "name": "CoinSpot",
+      "au_serving": true,
+      "nz_serving": false,
+      "austrac_registered": true,
+      "registered_since": "2018-05-08",
+      "funding": {
+        "aud_payid_bank": true,
+        "aud_card_buy": true,
+        "nzd_bank_transfer": false,
+        "nzd_card_buy": false
+      },
+      "smsf_support": true,
+      "advanced_features": false,
+      "demo_mode": false,
+      "fee_info": "1%",
+      "partner": true,
+      "sponsored": false,
+      "promos": [],
+      "coins_supported": 500,
+      "ease_of_setup": 5,
+      "established_year": 2013,
+      "custom_badge": "Great for Beginners"
+    },
+    {
+      "id": "coinstash",
+      "affiliate_id": "coinstash",
+      "name": "Coinstash",
+      "au_serving": true,
+      "nz_serving": false,
+      "austrac_registered": true,
+      "funding": {
+        "aud_payid_bank": true,
+        "aud_card_buy": true,
+        "nzd_bank_transfer": false,
+        "nzd_card_buy": false
+      },
+      "smsf_support": true,
+      "advanced_features": false,
+      "demo_mode": false,
+      "fee_info": "0.85% - 0.13% (tiered)",
+      "partner": true,
+      "sponsored": false,
+      "promos": [],
+      "coins_supported": 1200,
+      "ease_of_setup": 5,
+      "established_year": 2018,
+      "custom_badge": "Huge Selection"
+    },
+    {
+      "id": "kraken",
+      "affiliate_id": "kraken",
+      "name": "Kraken Pro",
+      "au_serving": true,
+      "nz_serving": false,
+      "austrac_registered": true,
+      "funding": {
+      "aud_payid_bank": true,
+      "aud_card_buy": true,
+      "nzd_bank_transfer": false,
+      "nzd_card_buy": false
+      },
+      "smsf_support": true,
+      "advanced_features": true,
+      "demo_mode": false,
+      "fee_info": "Maker 0.25%–0.00%, Taker 0.40%–0.08% (30d volume-tiered)",
+      "partner": false,
+      "sponsored": false,
+      "promos": [],
+      "coins_supported": 200,
+      "ease_of_setup": 4,
+      "established_year": 2011,
+      "custom_badge": "Pro Trader"
+    },
+    {
+      "id": "coinbase",
+      "affiliate_id": "coinbase",
+      "name": "Coinbase",
+      "au_serving": true,
+      "nz_serving": true,
+      "austrac_registered": true,
+      "funding": {
+        "aud_payid_bank": true,
+        "aud_card_buy": true,
+        "nzd_bank_transfer": false,
+        "nzd_card_buy": false
+      },
+      "smsf_support": true,
+      "advanced_features": true,
+      "demo_mode": false,
+      "fee_info": "Maker 0.60%–0.00%, Taker 1.20%–0.03% (tiered)",
+      "partner": false,
+      "sponsored": false,
+      "promos": [],
+      "coins_supported": 300,
+      "ease_of_setup": 4,
+      "established_year": 2012,
+      "custom_badge": "Global Leader"
+    }
+  ]
+}
