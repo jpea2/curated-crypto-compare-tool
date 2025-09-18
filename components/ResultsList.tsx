@@ -20,7 +20,7 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
   const typedProviders = providers as ProviderWithExtras[];
 
   const [sortBy, setSortBy] = useState<'name' | 'coins' | 'fees' | 'established'>('name');
-  const [showFilters, setShowFilters] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Filter states
   const [selectedCurrencies, setSelectedCurrencies] = useState<string[]>([]);
@@ -159,7 +159,7 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select an exchange</option>
-                {filteredAndSortedProviders.map(provider => (
+                {typedProviders.map(provider => (
                   <option
                     key={provider.id}
                     value={provider.id}
@@ -179,7 +179,7 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">Select an exchange</option>
-                {filteredAndSortedProviders.map(provider => (
+                {typedProviders.map(provider => (
                   <option
                     key={provider.id}
                     value={provider.id}
@@ -392,4 +392,3 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
     </div>
   );
 }
-
