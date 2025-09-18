@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ChevronDown, ChevronUp, Filter, X } from 'lucide-react';
+import { ArrowRightLeft, Filter, Scale, X } from 'lucide-react';
 import ProviderCard from './ProviderCard';
+import ComparisonTable from './ComparisonTable';
 import { Provider } from '@/types';
 import Link from 'next/link';
 
@@ -14,7 +14,11 @@ interface ResultsListProps {
   region?: 'au' | 'nz';
 }
 
+type ProviderWithExtras = Provider & Record<string, any>;
+
 export default function ResultsList({ providers, region }: ResultsListProps) {
+  const typedProviders = providers as ProviderWithExtras[];
+
   const [sortBy, setSortBy] = useState<'name' | 'coins' | 'fees' | 'established'>('name');
   const [showFilters, setShowFilters] = useState(true);
 
@@ -23,9 +27,23 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
   const [selectedDepositMethods, setSelectedDepositMethods] = useState<string[]>([]);
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
 
+  // Comparison selector state
+  const [primarySelection, setPrimarySelection] = useState('');
+  const [secondarySelection, setSecondarySelection] = useState('');
+  const [comparisonProviders, setComparisonProviders] = useState<ProviderWithExtras[]>([]);
+  const comparisonRef = useRef<HTMLDivElement | null>(null);
+
+  const providerLookup = useMemo(() => {
+    const map = new Map<string, ProviderWithExtras>();
+    typedProviders.forEach(provider => {
+      map.set(provider.id, provider);
+    });
+    return map;
+  }, [typedProviders]);
+
   // Filter and sort providers
   const filteredAndSortedProviders = useMemo(() => {
-    let filtered = [...providers];
+    let filtered = [...typedProviders];
 
     // Apply currency filters
     if (selectedCurrencies.length > 0) {
@@ -42,7 +60,7 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
     if (selectedDepositMethods.length > 0) {
       filtered = filtered.filter(provider => {
         return selectedDepositMethods.some(method => {
-          return provider.funding[method as keyof typeof provider.funding];
+          return provider.funding?.[method as keyof typeof provider.funding];
         });
       });
     }
@@ -72,7 +90,29 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
       default:
         return filtered;
     }
-  }, [providers, selectedCurrencies, selectedDepositMethods, selectedFeatures, sortBy]);
+  }, [typedProviders, selectedCurrencies, selectedDepositMethods, selectedFeatures, sortBy]);
+
+  // Ensure selections remain valid when list changes
+  useEffect(() => {
+    if (primarySelection && !providerLookup.has(primarySelection)) {
+      setPrimarySelection('');
+    }
+    if (secondarySelection && !providerLookup.has(secondarySelection)) {
+      setSecondarySelection('');
+    }
+  }, [providerLookup, primarySelection, secondarySelection]);
+
+  const handleCompare = () => {
+    if (!primarySelection || !secondarySelection) return;
+    const first = providerLookup.get(primarySelection);
+    const second = providerLookup.get(secondarySelection);
+    if (!first || !second) return;
+
+    setComparisonProviders([first, second]);
+    requestAnimationFrame(() => {
+      comparisonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
 
   // Clear all filters
   const clearAllFilters = () => {
@@ -83,14 +123,86 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
 
   // Check if any filters are active
   const hasActiveFilters = selectedCurrencies.length > 0 || selectedDepositMethods.length > 0 || selectedFeatures.length > 0;
+  const comparisonActive = comparisonProviders.length === 2;
 
   return (
     <div className="space-y-8">
       {/* Comparison Header */}
       <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border-0">
+        <div className="mb-6 space-y-3">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900 flex items-center">
+                <Scale className="h-5 w-5 mr-2 text-blue-600" />
+                Compare exchanges side by side
+              </h3>
+              <p className="text-sm text-gray-600">Select two providers to see their details in a comparison table below.</p>
+            </div>
+            {comparisonActive && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setComparisonProviders([])}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                Clear comparison
+              </Button>
+            )}
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-[1fr,1fr,auto]">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">First exchange</label>
+              <select
+                value={primarySelection}
+                onChange={(event) => setPrimarySelection(event.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select an exchange</option>
+                {filteredAndSortedProviders.map(provider => (
+                  <option
+                    key={provider.id}
+                    value={provider.id}
+                    disabled={provider.id === secondarySelection}
+                  >
+                    {provider.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Second exchange</label>
+              <select
+                value={secondarySelection}
+                onChange={(event) => setSecondarySelection(event.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select an exchange</option>
+                {filteredAndSortedProviders.map(provider => (
+                  <option
+                    key={provider.id}
+                    value={provider.id}
+                    disabled={provider.id === primarySelection}
+                  >
+                    {provider.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-end">
+              <Button onClick={handleCompare} disabled={!primarySelection || !secondarySelection} className="w-full">
+                <ArrowRightLeft className="h-4 w-4 mr-2" />
+                {comparisonActive ? 'Update comparison' : 'Compare'}
+              </Button>
+            </div>
+          </div>
+        </div>
+
         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 sm:mb-0">
-            {filteredAndSortedProviders.length} of {providers.length} Crypto Exchange{providers.length !== 1 ? 's' : ''}
+            {filteredAndSortedProviders.length} of {typedProviders.length} Crypto Exchange{typedProviders.length !== 1 ? 's' : ''}
             {region && ` in ${region === 'au' ? 'Australia' : 'New Zealand'}`}
           </h2>
 
@@ -139,8 +251,8 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
                 <h4 className="font-medium text-gray-900 mb-3">Currency</h4>
                 <div className="space-y-2">
                   {[
-                    { id: 'aud', label: 'Australian Dollar (AUD)', count: providers.filter(p => p.au_serving).length },
-                    { id: 'nzd', label: 'New Zealand Dollar (NZD)', count: providers.filter(p => p.nz_serving).length }
+                    { id: 'aud', label: 'Australian Dollar (AUD)', count: typedProviders.filter(p => p.au_serving).length },
+                    { id: 'nzd', label: 'New Zealand Dollar (NZD)', count: typedProviders.filter(p => p.nz_serving).length }
                   ].map((currency) => (
                     <div key={currency.id} className="flex items-center space-x-2">
                       <Checkbox
@@ -167,10 +279,10 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
                 <h4 className="font-medium text-gray-900 mb-3">Deposit Methods</h4>
                 <div className="space-y-2">
                   {[
-                    { id: 'aud_payid_bank', label: 'AUD Bank Transfer/PayID', count: providers.filter(p => p.funding.aud_payid_bank).length },
-                    { id: 'aud_card_buy', label: 'AUD Card Purchase', count: providers.filter(p => p.funding.aud_card_buy).length },
-                    { id: 'nzd_bank_transfer', label: 'NZD Bank Transfer', count: providers.filter(p => p.funding.nzd_bank_transfer).length },
-                    { id: 'nzd_card_buy', label: 'NZD Card Purchase', count: providers.filter(p => p.funding.nzd_card_buy).length }
+                    { id: 'aud_payid_bank', label: 'AUD Bank Transfer/PayID', count: typedProviders.filter(p => p.funding?.aud_payid_bank).length },
+                    { id: 'aud_card_buy', label: 'AUD Card Purchase', count: typedProviders.filter(p => p.funding?.aud_card_buy).length },
+                    { id: 'nzd_bank_transfer', label: 'NZD Bank Transfer', count: typedProviders.filter(p => p.funding?.nzd_bank_transfer).length },
+                    { id: 'nzd_card_buy', label: 'NZD Card Purchase', count: typedProviders.filter(p => p.funding?.nzd_card_buy).length }
                   ].map((method) => (
                     <div key={method.id} className="flex items-center space-x-2">
                       <Checkbox
@@ -197,9 +309,9 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
                 <h4 className="font-medium text-gray-900 mb-3">Features</h4>
                 <div className="space-y-2">
                   {[
-                    { id: 'smsf', label: 'SMSF Support', count: providers.filter(p => p.smsf_support).length },
-                    { id: 'advanced', label: 'Advanced Features', count: providers.filter(p => p.advanced_features).length },
-                    { id: 'demo', label: 'Demo Mode', count: providers.filter(p => p.demo_mode).length }
+                    { id: 'smsf', label: 'SMSF Support', count: typedProviders.filter(p => p.smsf_support).length },
+                    { id: 'advanced', label: 'Advanced Features', count: typedProviders.filter(p => p.advanced_features).length },
+                    { id: 'demo', label: 'Demo Mode', count: typedProviders.filter(p => p.demo_mode).length }
                   ].map((feature) => (
                     <div key={feature.id} className="flex items-center space-x-2">
                       <Checkbox
@@ -263,6 +375,21 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
           )}
         </div>
       )}
+
+      <div ref={comparisonRef} className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md border-0">
+        <div className="flex items-center gap-2 mb-4">
+          <Scale className="h-5 w-5 text-blue-600" />
+          <h2 className="text-xl font-semibold text-gray-900">Exchange comparison</h2>
+        </div>
+        {comparisonActive ? (
+          <ComparisonTable providers={comparisonProviders} />
+        ) : (
+          <p className="text-sm text-gray-600">
+            Select two exchanges above and choose Compare to see their details side by side.
+          </p>
+        )}
+      </div>
     </div>
   );
 }
+
