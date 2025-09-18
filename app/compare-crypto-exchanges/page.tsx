@@ -70,8 +70,8 @@ export default function ComparisonPage({ searchParams }: ComparisonPageProps) {
             </Link>
 
             <nav className="hidden md:flex space-x-4">
-              <Link href="/methodology" className="text-sm text-gray-600 hover:text-gray-900">
-                Methodology
+              <Link href="/how-we-compare" className="text-sm text-gray-600 hover:text-gray-900">
+                How We Compare
               </Link>
               <Link href="/affiliate-disclosure" className="text-sm text-gray-600 hover:text-gray-900">
                 Affiliate Disclosure

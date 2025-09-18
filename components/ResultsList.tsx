@@ -256,8 +256,8 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
             </Button>
           ) : (
             <Button asChild>
-              <Link href="/methodology">
-                Learn More About Our Selection Criteria
+              <Link href="/how-we-compare">
+                Learn More About Our Comparison Criteria
               </Link>
             </Button>
           )}

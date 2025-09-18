@@ -309,8 +309,8 @@ export default function PrivacyPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 text-sm">
-                  You can also review our <Link href="/methodology" className="text-blue-600 hover:underline">methodology page</Link> for 
-                  details on how matching works.
+                  You can also review our <Link href="/how-we-compare" className="text-blue-600 hover:underline">How We Compare</Link> page for 
+                  details on how our comparison works.
                 </p>
               </CardContent>
             </Card>

@@ -129,7 +129,7 @@ export default function AffiliateDisclosurePage() {
                 We have affiliate partnerships with select cryptocurrency exchanges. Partner status is clearly indicated on individual exchange cards in your results with a "Partner" badge.
               </p>
               <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
-                <strong>Important:</strong> Partner relationships may change over time. Current partner status is always shown on the exchange cards in your quiz results.
+                <strong>Important:</strong> Partner relationships may change over time. Current partner status is always shown on exchange cards in our comparison.
               </p>
             </CardContent>
           </Card>
@@ -172,8 +172,8 @@ export default function AffiliateDisclosurePage() {
             <h3 className="text-lg font-semibold text-gray-900 mb-3">Questions About Our Model?</h3>
             <p className="text-gray-700 leading-relaxed">
               We believe in complete transparency. If you have questions about how our revenue 
-              model works, how matches are determined, or our relationship with any exchange, 
-              please review our <Link href="/methodology" className="text-blue-600 hover:underline">methodology page</Link> for 
+              model works or our relationship with any exchange, please review our{' '}
+              <Link href="/how-we-compare" className="text-blue-600 hover:underline">How We Compare</Link> page for
               detailed information.
             </p>
           </div>
@@ -182,7 +182,7 @@ export default function AffiliateDisclosurePage() {
         {/* CTA */}
         <div className="text-center mt-12">
           <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
-            <Link href="/quiz">Find Your Match</Link>
+            <Link href="/compare-crypto-exchanges">Compare Exchanges</Link>
           </Button>
         </div>
       </main>

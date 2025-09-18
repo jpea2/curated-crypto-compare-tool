@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shield, BarChart3, FileText, AlertTriangle, Twitter, Grid3X3 } from 'lucide-react';
+import { Shield, BarChart3, FileText, Twitter, Grid3X3 } from 'lucide-react';
 import Footer from '@/components/Footer';
 
 export default function Home() {
@@ -16,7 +16,6 @@ export default function Home() {
               <span className="font-bold text-xl">CuratedCryptoInsights</span>
             </Link>
             <nav className="hidden md:flex space-x-6 items-center">
-              <Link href="/methodology" className="text-gray-600 hover:text-gray-900">Methodology</Link>
               <Link href="/affiliate-disclosure" className="text-gray-600 hover:text-gray-900">Affiliate Disclosure</Link>
               <a
                 href="https://x.com/curatedcryptoau"
@@ -52,12 +51,6 @@ export default function Home() {
               <Link href="/compare-crypto-exchanges">
                 <BarChart3 className="mr-2 h-5 w-5" />
                 Compare Exchanges
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="text-lg px-8 py-6">
-              <Link href="/methodology">
-                <FileText className="mr-2 h-5 w-5" />
-                How It Works
               </Link>
             </Button>
           </div>
