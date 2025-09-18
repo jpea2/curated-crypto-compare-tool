@@ -28,12 +28,15 @@ export interface Provider {
   ease_of_setup: number;
   established_year: number;
   custom_badge?: string;
+  exchange_origin?: 'local' | 'international';
 }
 
 export interface Promo {
   type: string;
+  title: string;
   description: string;
-  conditions: string[];
+  terms?: string;
+  active?: boolean;
 }
 
 export interface MatchResult {
