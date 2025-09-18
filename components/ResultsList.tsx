@@ -8,6 +8,7 @@ import ProviderCard from './ProviderCard';
 import ComparisonTable from './ComparisonTable';
 import { Provider } from '@/types';
 import Link from 'next/link';
+import { scrollIntoViewWithOffset } from './useScrollIntoViewWithOffset';
 
 interface ResultsListProps {
   providers: Provider[];
@@ -110,7 +111,7 @@ export default function ResultsList({ providers, region }: ResultsListProps) {
 
     setComparisonProviders([first, second]);
     requestAnimationFrame(() => {
-      comparisonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      scrollIntoViewWithOffset(comparisonRef, 120);
     });
   };
 
